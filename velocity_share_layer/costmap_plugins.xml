@@ -1,0 +1,6 @@
+<library path="lib/libvelocity_share_layer">
+  <class type="velocity_share_layer::VelocityShareLayer" base_class_type="costmap_2d::Layer">
+    <description>Uses robot velocity information to change the costmap</description>
+  </class>
+</library>
+
