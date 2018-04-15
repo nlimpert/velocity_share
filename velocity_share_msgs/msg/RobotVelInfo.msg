@@ -4,5 +4,4 @@
 
 string robot_name
 bool high_prio
-geometry_msgs/Pose pose
-geometry_msgs/Point vel_endpoint
+nav_msgs/Path path
