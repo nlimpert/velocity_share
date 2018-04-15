@@ -37,16 +37,16 @@ RobotVelVisualizer::robotvelCallback(const velocity_share_msgs::RobotVelInfoStam
   marker.color.g = 1.0;
   marker.color.a = 1.0;
 
-  geometry_msgs::Point p1;
-  p1.x = msg->robotvelinfo.pose.position.x;
-  p1.y = msg->robotvelinfo.pose.position.y;
+//  geometry_msgs::Point p1;
+//  p1.x = msg->robotvelinfo.pose.position.x;
+//  p1.y = msg->robotvelinfo.pose.position.y;
 
-  geometry_msgs::Point p2;
-  p2.x = msg->robotvelinfo.vel_endpoint.x;
-  p2.y = msg->robotvelinfo.vel_endpoint.y;
+//  geometry_msgs::Point p2;
+//  p2.x = msg->robotvelinfo.vel_endpoint.x;
+//  p2.y = msg->robotvelinfo.vel_endpoint.y;
 
-  marker.points.push_back(p1);
-  marker.points.push_back(p2);
+//  marker.points.push_back(p1);
+//  marker.points.push_back(p2);
 
   marker_pub.publish(marker);
 }
