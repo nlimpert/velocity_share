@@ -21,6 +21,7 @@ void VelocityShareLayer::onInitialize()
   enabled_ = true;
 
   robot_vel_sub_ = nh.subscribe("/robot_velocities", 1, &VelocityShareLayer::robotVelCallback, this);
+  ROS_INFO("Velocity share layer initialized.");
 }
 
 void VelocityShareLayer::robotVelCallback(const velocity_share_msgs::RobotVelInfoStamped& robot_vel_info) {
