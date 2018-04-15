@@ -52,16 +52,19 @@ void VelocityShareLayer::updateBounds(double origin_x, double origin_y, double o
   std::map<std::string, velocity_share_msgs::RobotVelInfo>::iterator r_it;
 
   for(r_it = robot_vel_infos_.begin(); r_it != robot_vel_infos_.end(); ++r_it){
-    velocity_share_msgs::RobotVelInfoStamped robot = r_it->second;
+    velocity_share_msgs::RobotVelInfo robot = r_it->second;
 
-    *min_x = (double) std::min(*min_x, std::min(robot.robotvelinfo.pose.position.x + robot.robotvelinfo.vel_endpoint.x,
-                                                robot.robotvelinfo.pose.position.x - robot.robotvelinfo.vel_endpoint.x));
-    *min_y = (double) std::min(*min_y, std::min(robot.robotvelinfo.pose.position.y + robot.robotvelinfo.vel_endpoint.y,
-                                                robot.robotvelinfo.pose.position.y - robot.robotvelinfo.vel_endpoint.y));
-    *max_x = (double) std::max(*max_x, std::max(robot.robotvelinfo.pose.position.x + robot.robotvelinfo.vel_endpoint.x,
-                                                robot.robotvelinfo.pose.position.x - robot.robotvelinfo.vel_endpoint.x));
-    *max_y = (double) std::max(*max_y, std::max(robot.robotvelinfo.pose.position.y + robot.robotvelinfo.vel_endpoint.y,
-                                                robot.robotvelinfo.pose.position.y - robot.robotvelinfo.vel_endpoint.y));
+    if (robot.path.poses.size() < 2) {
+      break;
+    }
+    geometry_msgs::PoseStamped wp_start = robot.path.poses.front();
+    geometry_msgs::PoseStamped wp_end = robot.path.poses.back();
+    // TODO!!
+
+    *min_x = (double) std::min(*min_x, std::min(wp_start.pose.position.x, wp_end.pose.position.x));
+    *min_y = (double) std::min(*min_y, std::min(wp_start.pose.position.y, wp_end.pose.position.y));
+    *max_x = (double) std::max(*max_x, std::max(wp_start.pose.position.x, wp_end.pose.position.x));
+    *max_y = (double) std::max(*max_y, std::max(wp_start.pose.position.y, wp_end.pose.position.y));
   }
 }
 
