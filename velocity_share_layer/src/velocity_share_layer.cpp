@@ -83,39 +83,44 @@ void VelocityShareLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min
   for(robot_it = robot_vel_infos_.begin(); robot_it != robot_vel_infos_.end(); ++robot_it){
     velocity_share_msgs::RobotVelInfo robot_vel_info = robot_it->second;
 
-    ros::Time robottime(robot_vel_info.header.stamp);
+    ros::Time robottime(robot_vel_info.path.header.stamp);
     ros::Duration dur = ros::Time::now() - robottime;
 
     // TODO: setup as paremeter!
     ros::Duration max_dur(5.0);
-    double res = costmap->getResolution();
+    double res = costmap->getResolution() / 2.;
 
-    if (dur < max_dur) {
+    int num_steps = 0;
+
+    if (dur < max_dur && robot_vel_info.high_prio == true) {
       unsigned int mx, my;
+      for(size_t i_p = 0; i_p < robot_vel_info.path.poses.size() - 1; i_p++){
+        geometry_msgs::Pose cur_pose = robot_vel_info.path.poses[i_p].pose;
+        geometry_msgs::Pose next_pose = robot_vel_info.path.poses[i_p + 1].pose;
 
-      double dx = (robot_vel_info.robotvelinfo.vel_endpoint.x - robot_vel_info.robotvelinfo.pose.position.x);
-      double dy = (robot_vel_info.robotvelinfo.vel_endpoint.y - robot_vel_info.robotvelinfo.pose.position.y);
+        double dx = (next_pose.position.x - cur_pose.position.x);
+        double dy = (next_pose.position.y - cur_pose.position.y);
+        double dphi = atan2(dy, dx);
 
-      double x_step = dx * res;
-      double y_step = dy * res;
+        double x_step = cos(dphi) * res;
+        double y_step = sin(dphi) * res;
 
-      int num_steps;
-
-      if (fabs(x_step) > fabs(y_step)) {
-        num_steps = fabs(dx / res);
-      } else {
-        num_steps = fabs(dy / res);
-      }
-
-      double cur_x = robot_vel_info.robotvelinfo.pose.position.x;
-      double cur_y = robot_vel_info.robotvelinfo.pose.position.y;
-
-      for (int i = 0; i < num_steps; i++) {
-        if(costmap->worldToMap(cur_x, cur_y, mx, my)){
-          costmap->setCost(mx, my, LETHAL_OBSTACLE);
+        if (fabs(x_step) > fabs(y_step)) {
+          num_steps = std::max((int) fabs(dx / res), 1);
+        } else {
+          num_steps = std::max((int) fabs(dy / res), 1);
         }
-        cur_x += x_step;
-        cur_y += y_step;
+
+        double cur_x = cur_pose.position.x;
+        double cur_y = cur_pose.position.y;
+
+        for (int i = 0; i < num_steps; i++) {
+          if(costmap->worldToMap(cur_x, cur_y, mx, my)){
+              costmap->setCost(mx, my, 254);
+          }
+          cur_x += x_step;
+          cur_y += y_step;
+        }
       }
     }
   }
