@@ -24,13 +24,13 @@ void VelocityShareLayer::onInitialize()
   ROS_INFO("Velocity share layer initialized.");
 }
 
-void VelocityShareLayer::robotVelCallback(const velocity_share_msgs::RobotVelInfoStamped& robot_vel_info) {
+void VelocityShareLayer::robotVelCallback(const velocity_share_msgs::RobotVelInfo& robot_vel_info) {
   boost::recursive_mutex::scoped_lock lock(lock_);
 
   // try to find robot_name in the message within the map
-  std::string robot_name(robot_vel_info.robotvelinfo.robot_name);
+  std::string robot_name(robot_vel_info.robot_name);
 
-  std::map<std::string, velocity_share_msgs::RobotVelInfoStamped>::iterator it =
+  std::map<std::string, velocity_share_msgs::RobotVelInfo>::iterator it =
       robot_vel_infos_.find(robot_name);
 
   if (it != robot_vel_infos_.end()) {
@@ -49,7 +49,7 @@ void VelocityShareLayer::updateBounds(double origin_x, double origin_y, double o
   if (!enabled_)
     return;
 
-  std::map<std::string, velocity_share_msgs::RobotVelInfoStamped>::iterator r_it;
+  std::map<std::string, velocity_share_msgs::RobotVelInfo>::iterator r_it;
 
   for(r_it = robot_vel_infos_.begin(); r_it != robot_vel_infos_.end(); ++r_it){
     velocity_share_msgs::RobotVelInfoStamped robot = r_it->second;
@@ -74,11 +74,11 @@ void VelocityShareLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min
   if( robot_vel_infos_.size() == 0 )
     return;
 
-  std::map<std::string, velocity_share_msgs::RobotVelInfoStamped>::iterator robot_it;
+  std::map<std::string, velocity_share_msgs::RobotVelInfo>::iterator robot_it;
   costmap_2d::Costmap2D* costmap = layered_costmap_->getCostmap();
 
   for(robot_it = robot_vel_infos_.begin(); robot_it != robot_vel_infos_.end(); ++robot_it){
-    velocity_share_msgs::RobotVelInfoStamped robot_vel_info = robot_it->second;
+    velocity_share_msgs::RobotVelInfo robot_vel_info = robot_it->second;
 
     ros::Time robottime(robot_vel_info.header.stamp);
     ros::Duration dur = ros::Time::now() - robottime;
