@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="2">
+<package>
   <name>velocity_share</name>
   <version>0.0.0</version>
   <description>The velocity_share package to use opponent robot position and velocity information for a costmap_2d.</description>
@@ -50,8 +50,8 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>velocity_share_layer</depend>
-  <depend>velocity_share_msgs</depend>
+  <run_depend>velocity_share_layer</run_depend>
+  <run_depend>velocity_share_msgs</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
